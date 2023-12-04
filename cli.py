@@ -5,6 +5,7 @@ from board import Board
 # from bank import Bank
 # from decimal import Decimal
 # from transaction import Transaction
+from exceptions import InvalidDirectionError
 
 class Menu:
     """Display a menu and respond to choices when run."""
@@ -15,6 +16,7 @@ class Menu:
     def __init__(self):
         """initialize menu with options"""
         self._board = Board()
+        self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._choices = {
             # "1": self._open_account,     
             # "2": self._summary,          
@@ -44,13 +46,45 @@ class Menu:
         """Display the menu and respond to choices."""
         while True:
             self._display_menu()
-            choice = input(">")
+            # TODO: display turn number and player
+            # TODO: put worker selection in separate method
+            print("Select a worker to move\n")
+            choice = input()
             action = self._choices.get(choice)
+            
+            # Specs say we should check valid directions for move and build BEFORE we call move_worker on player
+            self._step_direction = self._select_step_direction("move")
+            self._build_direction = self._select_build_direction("build")
+            
+            print(f"{self._selectedWorker},{self._step_direction},{self._build_direction}\n")
+
+            # TODO: take out?
             if action:
                 action()
             else:
                 print("{0} is not a valid choice".format(choice))
 
+# TODO: CHECK if we shoudl implement strategy pattern?
+    def _select_direction(self, dir_type):
+        '''dir_type: String, either "move" or "build"'''
+
+        valid_direction = None
+        
+        while valid_direction is None:
+            try:
+                dir_input = input(f"Select a direction to {dir_type} (n, ne, e, se, s, sw, w, nw)\n")
+                if dir_input.lower() in self._valid_directions:
+                    dir_input = dir_input.lower()
+                    # TODO
+                    valid_direction = self._selectedPlayer.check_valid_move(self._worker_name, dir_type, dir_input)
+                else:
+                    raise ValueError # TODO: Check if should be AttributeError
+            except ValueError:
+                print("Not a valid direction")
+            except InvalidDirectionError as ex:
+                print(f"Cannot move {ex.dir_type}.")
+        return(valid_direction)
+    
     # def _open_account(self, account_type=None):
     #     """open a new account"""
 
