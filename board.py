@@ -12,5 +12,5 @@ class Board:
             for j in range(5):
                 row.append(Tile())
             self.tiles.append(row)
-        self._initialize_workers()
+        # self._initialize_workers()
 
