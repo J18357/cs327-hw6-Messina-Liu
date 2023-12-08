@@ -1,5 +1,5 @@
 import sys
-from board import Board
+from game import Game
 # from tile import Tile
 # import pickle
 # from bank import Bank
@@ -16,87 +16,61 @@ class Menu:
     def __init__(self):
         """initialize menu with options"""
         self._board = Board()
-        self._gameEnd = False # Observer
+        self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
+        self._turn = 1
+
+        # TODO: we might be able to delete choices
         self._choices = {
-            # "1": self._open_account,     
-            # "2": self._summary,          
-            # "3": self._select_account,   
-            # "4": self._add_transaction,  
-            # "5": self._list_transactions,
-            # "6": self._interest_fees,    
-            # "7": self._save,                 
-            # "8": self._load,                
+            # "undo": self._undo,   # TODO: create undo function
+            # "redo": self._redo,   # TODO: create redo function
+            # "next": self._next ,  # TODO: create next function         
             "9": self._quit,                
         }
         
+    def get_curr_player(self):
+        """returns the current player"""
+        return (self._turn+1) % 2 + 1
+    
     def _display_menu(self):
-        for i in range(5):
-            print("+--+--+--+--+--+")
-            for j in range(5):
+        # print the game board
+        self._board.display_board()
 
-                print(f"|{self._board.tiles[i][j].level}",end='')
-                if self._board.tiles[i][j].worker:
-                    print(f"{self._board.tiles[i][j].worker.letter}",end='')
-                else:
-                    print(" ", end='')
-            print("|")
-        print("+--+--+--+--+--+")
+        # print the turn and current player
+        print(f"Turn: {self._turn}, {self._board.display_player(self.get_curr_player())}", end="")
 
+        # TODO: if score display is enabled, print score
+        # if (sys.argv[4] == "on"):
+        #     self._board.display_score()
+        # else:
+        #     print()
+
+        print()
+    
     def run(self):
         """Display the menu and respond to choices."""
         while True:
+            # displays turn number and player
             self._display_menu()
-            # TODO: display turn number and player
+
+            # asks for worker
+            worker = input("Select a worker to move\n")
+            # checks if selected worker is valid, reprompting if needed
+            while self._board.is_valid_worker(self.get_curr_player(), worker) == False:
+                worker = input("Select a worker to move\n")
+
+            # Moves the worker selected
+
+            # checks if selected direction is valid, reprompting if needed
+
             # + playerContext.setStrategy(human)
             # + maybe in Run(), strategy.move()
-            
+            # TODO: put worker selection in separate method
+
             # TODO: take out?
             # if action:
             #     action()
             # else:
             #     print("{0} is not a valid choice".format(choice))
-    
-    # def _open_account(self, account_type=None):
-    #     """open a new account"""
-
-    #     account_type = input("Type of account? (checking/savings)\n>")
-    #     self._bank.new_account(account_type)
-
-
-    # def _summary(self, accounts=None):
-    #     """display a sorted list of the accounts created in the bank"""
-    #     if accounts is None:
-    #         accounts = self._bank.all_accounts()
-    #     for account in accounts:
-    #         Decimal(account._balance).quantize(Decimal('.01'), rounding='ROUND_HALF_UP')
-    #         print(str(account))
-
-
-    # def _select_account(self):
-    #     account_id = input("""Enter account number\n>""")
-    #     Menu.selected_account = self._bank._find_account(account_id)
-
-    # def _add_transaction(self):
-    #     """adds a transaction to the user selected account"""
-    #     amount = float(input("Amount?\n>"))
-    #     date = input("Date? (YYYY-MM-DD)\n>")
-    #     n = Transaction(amount, date)
-    #     if not n._transaction_check(Menu.selected_account):
-    #         return
-    #     Menu.selected_account._transactions.append(n)
-    #     Menu.selected_account._balance += amount
-
-    # def _list_transactions(self, transactions=None):
-    #     """display a list of transactions of the selected account"""
-    #     if transactions is None:
-    #         transactions = Menu.selected_account.all_transactions()
-    #     for transaction in transactions:
-    #         Decimal(transaction._amount).quantize(Decimal('.01'), rounding='ROUND_HALF_UP')
-    #         print(str(transaction))
-
-    # def _interest_fees(self):
-    #     """calculate interest and fees associated with the account"""
-    #     Transaction._interest_fees(Menu.selected_account)
 
 
     # def _save(self):
