@@ -16,7 +16,7 @@ class Menu:
     def __init__(self):
         """initialize menu with options"""
         self._board = Board()
-        self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
+        self._gameEnd = False # Observer
         self._choices = {
             # "1": self._open_account,     
             # "2": self._summary,          
@@ -49,8 +49,7 @@ class Menu:
             # TODO: display turn number and player
             # + playerContext.setStrategy(human)
             # + maybe in Run(), strategy.move()
-            # TODO: put worker selection in separate method
-
+            
             # TODO: take out?
             # if action:
             #     action()

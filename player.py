@@ -3,6 +3,7 @@ from exceptions import InvalidDirectionError
 
 class PlayerContext:
     def __init__(self):
+        '''For encapsulation of Player class from Client'''
         self._player = None
 
     def setPlayerStrategy(self, playerStrat):
@@ -13,8 +14,11 @@ class PlayerContext:
         self._player.move()
 
 class Player:
-    def __init__(self):
+    def __init__(self, board):
         self.workers = [Worker()]
+        self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
+        self._selectedWorker = None
+        self._board = board
         # self.move = MoveCommand()
 
     def _initialize_workers(self):
@@ -28,13 +32,12 @@ class Player:
 
 class HumanPlayer(Player):
     def move(self):
-        # TODO: Prompts for 
+        # TODO: Prompts for worker
         # Specs say we should check valid directions for move and build BEFORE we call move_worker on player
         self._step_direction = self._select_direction("move")
         self._build_direction = self._select_direction("build")
         print(f"{self._step_direction},{self._build_direction}\n")
 
-# TODO: CHECK if we shoudl implement strategy pattern?
     def _select_direction(self, dir_type):
         '''dir_type: String, either "move" or "build"'''
 
@@ -46,13 +49,17 @@ class HumanPlayer(Player):
                 if dir_input.lower() in self._valid_directions:
                     dir_input = dir_input.lower()
                     # TODO
-                    valid_direction = self._selectedPlayer.check_valid_move(self._worker_name, dir_type, dir_input)
+                    valid_direction = self._board._check_move_dir(self._selectedWorker.row, self._selectedWorker.col, self._selectedWorker.get_level(), dir_type, dir_input)
                 else:
                     raise ValueError # TODO: Check if should be AttributeError
             except ValueError:
                 print("Not a valid direction")
             except InvalidDirectionError as ex:
-                print(f"Cannot move {ex.dir_type}.")
+                print(f"Cannot {ex.dir_type} {ex.dir}.")
         return(valid_direction)
+    
+    def _enumerate_moves(self):
+        pass
         
+
 
