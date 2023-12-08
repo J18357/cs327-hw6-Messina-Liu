@@ -15,7 +15,7 @@ class Menu:
 
     def __init__(self):
         """initialize menu with options"""
-        self._board = Board()
+        self.game = Game()
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._turn = 1
 
