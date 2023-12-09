@@ -1,29 +1,33 @@
 from board import Board
-from player import Player, HumanPlayer
 from tile import Tile
 from exceptions import InvalidDirectionError
 
 class Game:
     def __init__(self):
         # initialize the players within the board
-        self.players = [Player(1), Player(2)]
+        # self.players = [Player(1), Player(2)]
         self._board = Board(self.players)
         self.direction_dict = {"n":(-1,0), "ne":(-1,1), "e":(0,1), "se":(1,1), "s":(1,0), "sw":(1,-1), "w":(0,-1), "nw":(-1,-1)}
     
-    def check_move_dir(self, row_pos, col_pos, worker_level, dir_type, dir):
+    # TODO: revise to pass in worker
+    def check_move_dir(self, selectedWorker, dir_type, dir):
         input_dir = self.direction_dict[dir] # a tuple
-        move_row = row_pos + input_dir[0]
-        move_col = col_pos + input_dir[1]
+        workerPosition = selectedWorker.get_position()
+        move_row = workerPosition[0] + input_dir[0]
+        move_col = workerPosition[1] + input_dir[1]
+
         # check still in board
         if (move_row < 0 or move_row > 5) or (move_col < 0 or move_col > 5):
-            # may revise later to re-use in enumerate moves method
-            raise InvalidDirectionError(dir, dir_type)
+            return False
         else:
-            neighbor_tile = self.tiles[move_row][move_col]
+            neighbor_tile = self._board.tiles[move_row][move_col]
+
+            # check space does not have a worker or dome (level 4)
+            # TODO: check encapsulation of Tile from Game
             if neighbor_tile.has_worker() or neighbor_tile.get_level() == 4:
-                raise InvalidDirectionError(dir, dir_type)
-            if (dir_type == "move") and (neighbor_tile.get_level() > worker_level + 1):
-                raise InvalidDirectionError(dir, dir_type)
+                return False
+            if (dir_type == "move") and (neighbor_tile.get_level() > self.get_tile_level(workerPosition) + 1):
+                return False
         return True
     
     # def get_all_workers(self):

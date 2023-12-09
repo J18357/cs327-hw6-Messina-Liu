@@ -5,10 +5,6 @@ class Worker:
         self.letter = letter
         self.row = row_pos
         self.col = col_pos
-
-    # WILL change
-    # def get_level(self):
-    #     return self._tile.get_level()
     
     def __str__(self):
         return f"letter: {self.letter}, position: ({self.row}, {self.col})"

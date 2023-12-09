@@ -1,10 +1,8 @@
 import sys
 from game import Game
+from player import Player
 # from tile import Tile
 # import pickle
-# from bank import Bank
-# from decimal import Decimal
-# from transaction import Transaction
 from exceptions import InvalidDirectionError
 
 class Menu:
@@ -15,9 +13,12 @@ class Menu:
 
     def __init__(self):
         """initialize menu with options"""
-        self.game = Game()
+        self._game = Game()
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._turn = 1
+        self._gameOver = False
+        # initialize the players
+        self.players = [Player(1), Player(2)]
 
         # TODO: we might be able to delete choices
         self._choices = {
@@ -48,19 +49,12 @@ class Menu:
     
     def run(self):
         """Display the menu and respond to choices."""
-        while True:
+        while not self._gameOver:
+            if self.check_game_ended() != 0:
+                self._gameOver = True
+            
             # displays turn number and player
             self._display_menu()
-
-            # asks for worker
-            worker = input("Select a worker to move\n")
-            # checks if selected worker is valid, reprompting if needed
-            while self.game.is_valid_worker(self.get_curr_player(), worker) == False:
-                worker = input("Select a worker to move\n")
-
-            # Moves the worker selected
-
-            # checks if selected direction is valid, reprompting if needed
 
             # + playerContext.setStrategy(human)
             # + maybe in Run(), strategy.move()
@@ -71,8 +65,38 @@ class Menu:
             #     action()
             # else:
             #     print("{0} is not a valid choice".format(choice))
-
-
+        
+        # game over
+        if self.check_game_ended == 1:
+            winnerColor = "white"
+        else:
+            winnerColor = "blue"
+        print(f"{winnerColor} has won")
+        self.restart()
+    
+    def check_game_ended(self):
+        '''If there is a winner, returns the winner's player number, otherwise returns 0'''
+        isWinner = 0
+        for playerNum in [1,2]:
+            if self.players[playerNum].check_winner():
+                isWinner = playerNum
+            elif self.players[playerNum].check_loser():
+                isWinner = 3-playerNum
+            else:
+                isWinner = 0
+        return isWinner
+    
+    def restart(self):
+        restartInput = input("Would you like to play again?\n")
+        if restartInput == "yes":
+            self.game = Game()
+            self._gameOver = False
+            self.players = [Player(1), Player(2)]
+            self.turn = 1
+            self.run()
+        else:
+            self._quit()
+    
     # def _save(self):
     #     with open("Bank_save.pickle", "wb") as f:
     #         pickle.dump(self._bank, f)
@@ -87,3 +111,5 @@ class Menu:
 
 if __name__ == "__main__":
     Menu().run()
+
+    # TODO: catch AttributeError from restart input > exit
