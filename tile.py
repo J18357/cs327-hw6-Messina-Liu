@@ -8,6 +8,9 @@ class Tile:
     def has_worker(self):
         return not self._worker is None
     
+    def get_worker(self):
+        return self.worker
+    
     def get_level(self):
-        return self._level
+        return self.level
         

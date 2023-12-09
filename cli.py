@@ -33,10 +33,10 @@ class Menu:
     
     def _display_menu(self):
         # print the game board
-        self._board.display_board()
+        self.game.display_board()
 
         # print the turn and current player
-        print(f"Turn: {self._turn}, {self._board.display_player(self.get_curr_player())}", end="")
+        print(f"Turn: {self._turn}, {self.game.display_player(self.get_curr_player())}", end="")
 
         # TODO: if score display is enabled, print score
         # if (sys.argv[4] == "on"):
@@ -55,7 +55,7 @@ class Menu:
             # asks for worker
             worker = input("Select a worker to move\n")
             # checks if selected worker is valid, reprompting if needed
-            while self._board.is_valid_worker(self.get_curr_player(), worker) == False:
+            while self.game.is_valid_worker(self.get_curr_player(), worker) == False:
                 worker = input("Select a worker to move\n")
 
             # Moves the worker selected

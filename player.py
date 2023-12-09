@@ -1,5 +1,5 @@
 from worker import Worker
-from game import Game
+# from game import Game
 from exceptions import InvalidDirectionError
 
 class PlayerContext:
@@ -15,11 +15,11 @@ class PlayerContext:
         self._player.move()
 
 class Player:
-    def __init__(self, player, game):
+    def __init__(self, player): # game
         self._initialize_workers(player)
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._selectedWorker = None
-        self._game = game
+        # self._game = game
         # self.move = MoveCommand()
 
     def _initialize_workers(self, player):
