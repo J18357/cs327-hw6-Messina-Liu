@@ -2,24 +2,14 @@ from worker import Worker
 # from game import Game
 from exceptions import InvalidDirectionError
 
-class PlayerContext:
-    def __init__(self):
-        '''For encapsulation of Player class from Client'''
-        self._player = None
 
-    def setPlayerStrategy(self, playerStrat):
-        # TODO: validate that playerStrat is a real strategy?
-        self._player = playerStrat
-    
-    def movePlayer(self):
-        self._player.move()
 
 class Player:
-    def __init__(self, player): # game
+    def __init__(self, player, game): # game
         self._initialize_workers(player)
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._selectedWorker = None
-        # self._game = game
+        self.game = game
         # self.move = MoveCommand()
 
     def _initialize_workers(self, player):
@@ -55,12 +45,12 @@ class Player:
     def check_winner(self):
         for worker in self.workers:
             workerPos = worker.get_position()
-            if self._game.get_tile_level(workerPos) == 3:
+            if self.game.get_tile_level(workerPos) == 3:
                 return True
         return False
     
     def check_loser(self):
-        if len(self._game.enumerate_moves(self.workers[0])) == 0 and len(self._game.enumerate_moves(self.workers[1])) == 0:
+        if len(self.game.enumerate_moves(self.workers[0])) == 0 and len(self.game.enumerate_moves(self.workers[1])) == 0:
             return True
         else:
             return False
@@ -82,7 +72,7 @@ class HumanPlayer(Player):
                 worker_to_check = self._select_this_worker(workerInput)
                 # check if the selected worker is capable of moving
                 # note: at least one worker should be capable of moving since we checked gameOver() before this turn/move
-                valid_moves_lst = self._game.enumerate_moves(self._select_this_worker(workerInput))
+                valid_moves_lst = self.game.enumerate_moves(self._select_this_worker(workerInput))
                 if len(valid_moves_lst) == 0:
                     print("That worker cannot move\n")
                 else:
@@ -104,7 +94,7 @@ class HumanPlayer(Player):
                 dir_input = input(f"Select a direction to {dir_type} (n, ne, e, se, s, sw, w, nw)\n")
                 if dir_input.lower() in self._valid_directions:
                     dir_input = dir_input.lower()
-                    if self._game._check_move_dir(self._selectedWorker, dir_type, dir_input) == False:
+                    if self.game._check_move_dir(self._selectedWorker, dir_type, dir_input) == False:
                         print(f"Cannot {dir_type} {dir}.")
                     else:
                         valid_direction = dir_input
@@ -119,5 +109,29 @@ class HumanPlayer(Player):
     def enum_moves(self):
         pass
         
+class RandomAI(Player):
+    pass
 
+class HeuristicAI(Player):
+    pass
 
+class PlayerContext:
+    def __init__(self, player_type_with_params: Player):
+        '''For encapsulation of Player class from Client'''
+        self._player = player_type_with_params
+
+    # def setPlayerStrategy(self, playerStrat):
+    #     # TODO: validate that playerStrat is a real strategy?
+    #     self._player = playerStrat
+    
+    def movePlayer(self):
+        self._player.move()
+    
+    def check_winner(self):
+        return self._player.check_winner()
+    
+    def check_loser(self):
+        return self._player.check_loser()
+    
+    def get_workers(self):
+        return self._player.get_workers()
