@@ -1,5 +1,4 @@
 from board import Board
-from tile import Tile
 from exceptions import InvalidDirectionError
 
 class Game:
@@ -22,9 +21,8 @@ class Game:
         workerPosition = selectedWorker.get_position()
         move_row = workerPosition[0] + input_dir[0]
         move_col = workerPosition[1] + input_dir[1]
-
         # check still in board
-        if (move_row < 0 or move_row > 5) or (move_col < 0 or move_col > 5):
+        if move_row < 0 or move_row > 4 or move_col < 0 or move_col > 4:
             return False
         else:
             neighbor_tile = self._board.tiles[move_row][move_col]
@@ -43,9 +41,6 @@ class Game:
     
     def enumerate_moves(self, selectedWorker):
         valid_moves_lst = []
-        workerPos = selectedWorker.get_position()
-        worker_row = workerPos[0]
-        worker_col = workerPos[1]
 
         for i in range(-1, 1):
             for j in range(-1, 1):
@@ -80,12 +75,15 @@ class Game:
     #     print("Not a valid worker")
     #     return False
 
-    def build(self, selectedWorker, build_direction):
-        currPos = selectedWorker.get_position()
-        build_direction = self.direction_dict[build_direction]
-        self._board.inc_tile_level(currPos[0]+build_direction[0], currPos[1]+build_direction[1])
-        
-    def display_board(self):
+    def update_board_step(self, worker_oldPos, worker_newPos, selectedWorker):
+        self._board.update_tile(worker_oldPos)
+        self._board.update_tile(worker_newPos, selectedWorker) # passes selectedWorker reference to new tile
+
+    def update_board_build(self, build_pos):
+        self._board.update_tile_build(build_pos)
+
+    
+    def display_board(self, all_workers):
         for i in range(5):
             print("+--+--+--+--+--+")
             for j in range(5):
