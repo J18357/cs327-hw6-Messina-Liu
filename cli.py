@@ -30,7 +30,7 @@ class Menu:
             return PlayerContext(HeuristicAI(playerNum, game=self._game))
     
     def get_curr_player(self):
-        """returns the current player"""
+        """returns the current player number (1 or 2)"""
         return (self._turn+1) % 2 + 1
     
     def _display_menu(self):
@@ -78,6 +78,7 @@ class Menu:
             
             # displays turn number and player
             self._display_menu()
+            self.players[self.get_curr_player() - 1].movePlayer()
             
             # + playerContext.setStrategy(human)
             # + maybe in Run(), strategy.move()

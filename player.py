@@ -67,22 +67,24 @@ class HumanPlayer(Player):
             if workerInput not in ["A", "B", "Y", "Z"]:
                 print("Not a valid worker\n")
             elif not self.is_players_worker(workerInput):
-                print("That is not your worker\n")
+                print("That is not your worker")
             else:
                 worker_to_check = self._select_this_worker(workerInput)
                 # check if the selected worker is capable of moving
                 # note: at least one worker should be capable of moving since we checked gameOver() before this turn/move
                 valid_moves_lst = self.game.enumerate_moves(self._select_this_worker(workerInput))
                 if len(valid_moves_lst) == 0:
-                    print("That worker cannot move\n")
+                    print("That worker cannot move")
                 else:
                     selectedWorker = worker_to_check
+                    # print(f"{selectedWorker} is the selectedWorker.")
         self._selectedWorker = selectedWorker
             
         # Specs say we should check valid directions for move and build BEFORE we call move_worker on player
         self._step_direction = self._select_direction("move")
         self._build_direction = self._select_direction("build")
-        print(f"{self._step_direction},{self._build_direction}\n")
+        letter_to_print = self._selectedWorker.get_letter()
+        print(f"{letter_to_print},{self._step_direction},{self._build_direction}")
 
     def _select_direction(self, dir_type):
         '''dir_type: String, either "move" or "build"'''
@@ -94,7 +96,7 @@ class HumanPlayer(Player):
                 dir_input = input(f"Select a direction to {dir_type} (n, ne, e, se, s, sw, w, nw)\n")
                 if dir_input.lower() in self._valid_directions:
                     dir_input = dir_input.lower()
-                    if self.game._check_move_dir(self._selectedWorker, dir_type, dir_input) == False:
+                    if self.game.check_move_dir(self._selectedWorker, dir_type, dir_input) == False:
                         print(f"Cannot {dir_type} {dir}.")
                     else:
                         valid_direction = dir_input
