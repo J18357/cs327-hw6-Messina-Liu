@@ -16,4 +16,8 @@ class Worker:
     def get_position(self):
         """returns the position of the worker as [row, col]"""
         return [self.row, self.col]
+    
+    def step(self, new_row, new_col):
+        self.row = new_row
+        self.col = new_col
         

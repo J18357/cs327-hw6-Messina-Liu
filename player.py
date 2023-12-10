@@ -1,4 +1,5 @@
 from worker import Worker
+from move import Move
 # from game import Game
 from exceptions import InvalidDirectionError
 
@@ -10,7 +11,7 @@ class Player:
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._selectedWorker = None
         self.game = game
-        # self.move = MoveCommand()
+        self.move = Move()
 
     def _initialize_workers(self, player):
         """initialize workers within a given player"""
@@ -81,10 +82,14 @@ class HumanPlayer(Player):
         self._selectedWorker = selectedWorker
             
         # Specs say we should check valid directions for move and build BEFORE we call move_worker on player
-        self._step_direction = self._select_direction("move")
-        self._build_direction = self._select_direction("build")
+        step_direction = self._select_direction("move")
+        build_direction = self._select_direction("build")
+
+        # move
+        self.move.execute(selectedWorker, step_direction, build_direction)
+
         letter_to_print = self._selectedWorker.get_letter()
-        print(f"{letter_to_print},{self._step_direction},{self._build_direction}")
+        print(f"{letter_to_print},{step_direction},{build_direction}")
 
     def _select_direction(self, dir_type):
         '''dir_type: String, either "move" or "build"'''
