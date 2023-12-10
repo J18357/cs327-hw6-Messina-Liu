@@ -1,5 +1,6 @@
 from worker import Worker
 from move import Move
+import random
 # from game import Game
 from exceptions import InvalidDirectionError
 
@@ -46,7 +47,7 @@ class Player:
         return False
     
     def check_loser(self):
-        if len(self.game.enumerate_moves(self.workers[0])) == 0 and len(self.game.enumerate_moves(self.workers[1])) == 0:
+        if len(self.game.enumerate_moves(self.workers[0], "move")) == 0 and len(self.game.enumerate_moves(self.workers[1], "move")) == 0:
             return True
         else:
             return False
@@ -68,7 +69,7 @@ class HumanPlayer(Player):
                 worker_to_check = self._select_this_worker(workerInput)
                 # check if the selected worker is capable of moving
                 # note: at least one worker should be capable of moving since we checked gameOver() before this turn/move
-                valid_moves_lst = self.game.enumerate_moves(self._select_this_worker(workerInput))
+                valid_moves_lst = self.game.enumerate_moves(self._select_this_worker(workerInput), "move")
                 if len(valid_moves_lst) == 0:
                     print("That worker cannot move")
                 else:
@@ -103,12 +104,35 @@ class HumanPlayer(Player):
             except ValueError:
                 print("Not a valid direction")
         return(valid_direction)
-    
-    def enum_moves(self):
-        pass
-        
+
+
 class RandomAI(Player):
-    pass
+    def move(self):
+        '''
+        Randomly chooses a move from set of allowed moves
+        (1) randomly choose a worker
+        (2) choose a move from worker's set of allowed moves for step and build
+        '''
+        
+        selectedWorkerNum = random.choice([0,1])
+        self._selectedWorker = self.workers[selectedWorkerNum]
+        
+        workers_valid_moves = self.game.enumerate_moves(self._selectedWorker, "move")
+        if len(workers_valid_moves) == 0:
+            # if worker is unable to move, select the other worker
+            self._selectedWorker = self.workers[(selectedWorkerNum + 1) % 2]
+        
+        step_direction = random.choice(workers_valid_moves)
+        self.moveCommand.execute(self.game, self._selectedWorker, step_direction=step_direction)
+
+        worker_valid_builds = self.game.enumerate_moves(self._selectedWorker, "build")
+        # we know this worker can at least build on their previous position, so we don't need to check for no valid builds
+        build_direction = random.choice(worker_valid_builds)
+        self.moveCommand.execute(self.game, self._selectedWorker, build_direction=build_direction)
+        
+        letter_to_print = self._selectedWorker.get_letter()
+        print(f"{letter_to_print},{step_direction},{build_direction}")
+            
 
 class HeuristicAI(Player):
     pass

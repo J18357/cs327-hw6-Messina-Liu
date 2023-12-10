@@ -10,13 +10,14 @@ class Menu:
     # Store the currently selected account
     selected_account = None
 
-    def __init__(self, white_player_type="human", blue_player_type="human", enable_undo_redo="off", enable_score="off"):
+    def __init__(self, white_player_type, blue_player_type, enable_undo_redo, enable_score):
         """initialize menu with options"""
         self._game = Game()
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._turn = 1
         self._gameOver = False
         # initialize the players
+        print(f"player 1 type: {white_player_type}, player 2 type: {blue_player_type}")
         self.players = [self._set_player_strat(white_player_type, 1), self._set_player_strat(blue_player_type, 2)]
         
     def _set_player_strat(self, player_type, playerNum):
@@ -125,9 +126,20 @@ class Menu:
 
 
 if __name__ == "__main__":
-    for arg in sys.argv:
-        # TODO: check each argument is valid
-        pass
-    Menu().run()
+    white_player_type = "human"
+    blue_player_type = "human"
+    enable_undo_redo = "off"
+    enable_score = "off"
+
+    if sys.argv[1:]:   # test if there are atleast 1 argument (beyond [0])
+        white_player_type = sys.argv[1]
+        if sys.argv[2:]:
+            blue_player_type = sys.argv[2]
+            if sys.argv[3:]:
+                enable_undo_redo = sys.argv[3]
+                if sys.argv[4]:
+                    enable_score = sys.argv[4]
+    
+    Menu(white_player_type, blue_player_type, enable_undo_redo, enable_score).run()
 
     # TODO: catch AttributeError from restart input > exit

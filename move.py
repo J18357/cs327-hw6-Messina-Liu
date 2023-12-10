@@ -23,6 +23,7 @@ class Move():
             build_dir = self.direction_dict[build_direction]
             build_pos_row = currPos[0]+build_dir[0]
             build_pos_col = currPos[1]+build_dir[1]
+            
             game.update_board_build([build_pos_row, build_pos_col])
         else:
             print("No direction to move was given")
