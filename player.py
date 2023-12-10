@@ -1,17 +1,21 @@
 from worker import Worker
 from move import Move
 # from game import Game
+# from board import Board
 from exceptions import InvalidDirectionError
 
+from abc import ABC, abstractmethod
 
 
-class Player:
+
+class Player(ABC):
     def __init__(self, player, game): # game
-        self._initialize_workers(player)
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._selectedWorker = None
         self.game = game
-        self.move = Move()
+        self._initialize_workers(player)
+        # self.move = Move() # invoker
+        # self.move = None
 
     def _initialize_workers(self, player):
         """initialize workers within a given player"""
@@ -20,6 +24,9 @@ class Player:
             self.workers = [Worker("A", 3, 1), Worker("B", 1, 3)]
         elif player == 2:
             self.workers = [Worker("Y", 1, 1), Worker("Z", 3, 3)]
+        
+        for worker in self.workers:
+            self.game.update([0,0], worker)
 
     def get_workers(self):
         """returns a list of the workers of the player"""
@@ -32,6 +39,7 @@ class Player:
                 return True
         return False
     
+    @abstractmethod
     def move(self):
         pass
     
@@ -86,10 +94,15 @@ class HumanPlayer(Player):
         build_direction = self._select_direction("build")
 
         # move
-        self.move.execute(selectedWorker, step_direction, build_direction)
+        prev_pos = self._selectedWorker.get_position()
+        # self.move.execute(selectedWorker, step_direction, build_direction)
+        Move().execute(selectedWorker, step_direction, build_direction)
+        self.game.build(selectedWorker, build_direction)
 
         letter_to_print = self._selectedWorker.get_letter()
         print(f"{letter_to_print},{step_direction},{build_direction}")
+
+        self.game.update(prev_pos, self._selectedWorker)
 
     def _select_direction(self, dir_type):
         '''dir_type: String, either "move" or "build"'''
@@ -117,9 +130,15 @@ class HumanPlayer(Player):
         pass
         
 class RandomAI(Player):
+
+    def move(self):
+        pass
     pass
 
 class HeuristicAI(Player):
+
+    def move(self):
+        pass
     pass
 
 class PlayerContext:
@@ -132,6 +151,8 @@ class PlayerContext:
     #     self._player = playerStrat
     
     def movePlayer(self):
+        # self._player.move("hello") # call the instance as if it were a function
+        # print(input("wait"))
         self._player.move()
     
     def check_winner(self):

@@ -35,8 +35,8 @@ class Menu:
     
     def _display_menu(self):
         # print the game board
-        workers_lst = self.get_all_workers()
-        self._game.display_board(workers_lst)
+        # workers_lst = self.get_all_workers()
+        self._game.display_board()
         
         # print the turn and current player
         
@@ -79,6 +79,8 @@ class Menu:
             # displays turn number and player
             self._display_menu()
             self.players[self.get_curr_player() - 1].movePlayer()
+
+            self._turn += 1
             
             # + playerContext.setStrategy(human)
             # + maybe in Run(), strategy.move()

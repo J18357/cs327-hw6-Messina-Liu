@@ -79,20 +79,34 @@ class Game:
     #             return False
     #     print("Not a valid worker")
     #     return False
+
+    def build(self, selectedWorker, build_direction):
+        currPos = selectedWorker.get_position()
+        build_direction = self.direction_dict[build_direction]
+        self._board.inc_tile_level(currPos[0]+build_direction[0], currPos[1]+build_direction[1])
         
-    def display_board(self, all_workers):
+    def display_board(self):
         for i in range(5):
             print("+--+--+--+--+--+")
             for j in range(5):
                 print(f"|{self._board.tiles[i][j].level}",end='')
 
-                # if there is a worker on the tile or not
-                is_worker = False
-                for worker in all_workers:
-                    if [i,j] == worker.get_position():
-                        print(f"{worker.get_letter()}",end='')
-                        is_worker = True
-                if is_worker == False:
-                    print(" ", end='')
+# shouldn't do it this way
+                # # if there is a worker on the tile or not
+                # is_worker = False
+                # for worker in all_workers:
+                #     if [i,j] == worker.get_position():
+                #         print(f"{worker.get_letter()}",end='')
+                #         is_worker = True
+                # if is_worker == False:
+                #     print(" ", end='')
+
+                if self._board.tiles[i][j].worker:
+                    print(f"{self._board.tiles[i][j].worker.get_letter()}", end="")
+                else:
+                    print(" ", end="")
             print("|")
         print("+--+--+--+--+--+")
+
+    def update(self, prev_pos, worker):
+        self._board.update(prev_pos, worker)

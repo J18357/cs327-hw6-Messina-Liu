@@ -21,3 +21,5 @@ class Worker:
         self.row = new_row
         self.col = new_col
         
+    # def build(self, row, col):
+        # 
