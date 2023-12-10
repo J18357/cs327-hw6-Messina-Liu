@@ -1,5 +1,4 @@
 from tile import Tile
-from player import Player
 
 class Board:
     def __init__(self):
@@ -11,8 +10,12 @@ class Board:
             for j in range(5):
                 row.append(Tile())
             self.tiles.append(row)
-        # initialize the players within the board
-        # self.players = [Player(1), Player(2)]
     
-    def board_display(self):
-        pass
+    def update_tile(self, tilePos, worker=None):
+        tile_to_update = self.tiles[tilePos[0]][tilePos[1]]
+        tile_to_update.set_worker(worker)
+    
+    def update_tile_build(self, tilePos):
+        tile_to_build = self.tiles[tilePos[0]][tilePos[1]]
+        tile_to_build.incr_level()
+        

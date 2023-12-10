@@ -1,7 +1,6 @@
 import sys
 from game import Game
 from player import PlayerContext, HumanPlayer, RandomAI, HeuristicAI
-# from tile import Tile
 # import pickle
 from exceptions import InvalidDirectionError
 
@@ -39,7 +38,6 @@ class Menu:
         self._game.display_board(workers_lst)
         
         # print the turn and current player
-        
         print(f"Turn: {self._turn}, {self.display_player()}", end="")
 
         # TODO: if score display is enabled, print score
@@ -80,15 +78,7 @@ class Menu:
             self._display_menu()
             self.players[self.get_curr_player() - 1].movePlayer()
             
-            # + playerContext.setStrategy(human)
-            # + maybe in Run(), strategy.move()
-            # TODO: put worker selection in separate method
-
-            # TODO: take out?
-            # if action:
-            #     action()
-            # else:
-            #     print("{0} is not a valid choice".format(choice))
+            self._turn = self._turn + 1
         
         # game over
         if self.check_game_ended == 1:

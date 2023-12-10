@@ -3,15 +3,13 @@ from move import Move
 # from game import Game
 from exceptions import InvalidDirectionError
 
-
-
 class Player:
     def __init__(self, player, game): # game
         self._initialize_workers(player)
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._selectedWorker = None
         self.game = game
-        self.move = Move()
+        self.moveCommand = Move()
 
     def _initialize_workers(self, player):
         """initialize workers within a given player"""
@@ -31,9 +29,6 @@ class Player:
             if worker.letter == input_worker:
                 return True
         return False
-    
-    def move(self):
-        pass
     
     def _select_this_worker(self, input_letter):
         '''Returns this player's worker corresponding to the worker's letter.
@@ -78,16 +73,15 @@ class HumanPlayer(Player):
                     print("That worker cannot move")
                 else:
                     selectedWorker = worker_to_check
-                    # print(f"{selectedWorker} is the selectedWorker.")
         self._selectedWorker = selectedWorker
             
         # Specs say we should check valid directions for move and build BEFORE we call move_worker on player
         step_direction = self._select_direction("move")
+        self.moveCommand.execute(self.game, selectedWorker, step_direction=step_direction)
+
         build_direction = self._select_direction("build")
-
-        # move
-        self.move.execute(selectedWorker, step_direction, build_direction)
-
+        self.moveCommand.execute(self.game, selectedWorker, build_direction=build_direction)
+        
         letter_to_print = self._selectedWorker.get_letter()
         print(f"{letter_to_print},{step_direction},{build_direction}")
 
@@ -95,22 +89,19 @@ class HumanPlayer(Player):
         '''dir_type: String, either "move" or "build"'''
 
         valid_direction = None
-        
         while valid_direction is None:
             try:
                 dir_input = input(f"Select a direction to {dir_type} (n, ne, e, se, s, sw, w, nw)\n")
                 if dir_input.lower() in self._valid_directions:
                     dir_input = dir_input.lower()
                     if self.game.check_move_dir(self._selectedWorker, dir_type, dir_input) == False:
-                        print(f"Cannot {dir_type} {dir}.")
+                        print(f"Cannot {dir_type} {dir_input}")
                     else:
                         valid_direction = dir_input
                 else:
                     raise ValueError # TODO: Check if should be AttributeError
             except ValueError:
                 print("Not a valid direction")
-            # except InvalidDirectionError as ex:
-                # print(f"Cannot {ex.dir_type} {ex.dir}.")
         return(valid_direction)
     
     def enum_moves(self):
@@ -126,10 +117,6 @@ class PlayerContext:
     def __init__(self, player_type_with_params: Player):
         '''For encapsulation of Player class from Client'''
         self._player = player_type_with_params
-
-    # def setPlayerStrategy(self, playerStrat):
-    #     # TODO: validate that playerStrat is a real strategy?
-    #     self._player = playerStrat
     
     def movePlayer(self):
         self._player.move()
