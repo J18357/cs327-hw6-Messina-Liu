@@ -19,7 +19,6 @@ class Menu:
         # initialize the players
         print(f"player 1 type: {white_player_type}, player 2 type: {blue_player_type}")
         self.players = [self._set_player_strat(white_player_type, 1), self._set_player_strat(blue_player_type, 2)]
-        self._enable_score = enable_score
         
     def _set_player_strat(self, player_type, playerNum):
         # Assumes that player_type is valid
@@ -38,10 +37,6 @@ class Menu:
         # print the game board
         workers_lst = self.get_all_workers()
         self._game.display_board(workers_lst)
-
-        if self._enable_score:
-            # print the turn and current player
-            print(f"Turn: {self._turn}, {self.display_player()}, {self._game.get_curr_score(workers_lst)}", end="")
         
         # print the turn and current player
         print(f"Turn: {self._turn}, {self.display_player()}", end="")
@@ -82,12 +77,7 @@ class Menu:
             
             # displays turn number and player
             self._display_menu()
-            move_output = self.players[self.get_curr_player() - 1].movePlayer()
-            if self._enable_score:
-                print_out = move_output + self._game.get_curr_score()
-                print(print_out)
-            else:
-                print(move_output)
+            self.players[self.get_curr_player() - 1].movePlayer()
             
             self._turn = self._turn + 1
         
@@ -112,7 +102,7 @@ class Menu:
         return isWinner
     
     def restart(self):
-        restartInput = input("Play again?\n")
+        restartInput = input("Would you like to play again?\n")
         if restartInput == "yes":
             self._game = Game()
             self._gameOver = False

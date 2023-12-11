@@ -84,7 +84,7 @@ class Game:
         return valid_moves_lst
     
     def get_height_score(self, worker1_pos, worker2_pos):
-       return self.game.get_tile_level(worker1_pos) + self.game.get_tile_level(worker2_pos)
+       return self.get_tile_level(worker1_pos) + self.get_tile_level(worker2_pos)
 
     def get_center_score(self, worker1_pos, worker2_pos):
         return self.get_center_score_helper(worker1_pos) + self.get_center_score_helper(worker2_pos)
@@ -98,12 +98,13 @@ class Game:
             return 0
         else:
             return 1
-    
+ 
     def get_distance_score(self, movedWorkerPos, nonMovedWorkerPos):
         # Ex: for blue, dscore = min(distance from Z to A, distance from Y to A) + min(distance from Z to B, distance from Y to B)
         otherPlayer_pos = self._board.get_otherPlayer_positions(movedWorkerPos, nonMovedWorkerPos)
         otherPlayer_w1_pos = otherPlayer_pos[0]
         otherPlayer_w2_pos = otherPlayer_pos[1]
+        print(otherPlayer_pos)
 
         distance_from_movedW_to_w1 = abs(movedWorkerPos[0] - otherPlayer_w1_pos[0]) + abs(movedWorkerPos[1] - otherPlayer_w1_pos[1])
         distance_from_nonMW_to_w1 = abs(nonMovedWorkerPos[0] - otherPlayer_w1_pos[0]) + abs(nonMovedWorkerPos[1] - otherPlayer_w1_pos[1])
@@ -122,7 +123,7 @@ class Game:
         center_score = self.get_center_score(worker1_pos, worker2_pos)
         distance_score = self.get_distance_score(worker1_pos, worker2_pos)
 
-        return return f"({height_score},{center_score},{distance_score})"
+        return f"({height_score},{center_score},{distance_score})"
 
     # Helper function to return key for any value
     def get_dir_from_coords(self, val):
@@ -165,13 +166,18 @@ class Game:
             for j in range(5):
                 print(f"|{self._board.tiles[i][j].level}",end='')
 
-                # if there is a worker on the tile or not
-                is_worker = False
-                for worker in all_workers:
-                    if [i,j] == worker.get_position():
-                        print(f"{worker.get_letter()}",end='')
-                        is_worker = True
-                if is_worker == False:
+                # # if there is a worker on the tile or not
+                # is_worker = False
+                # for worker in all_workers:
+                #     if [i,j] == worker.get_position():
+                #         print(f"{worker.get_letter()}",end='')
+                #         is_worker = True
+                # if is_worker == False:
+                #     print(" ", end='')
+                if (self._board.tiles[i][j].has_worker() == False):
                     print(" ", end='')
+                else:
+                    print(f"{self._board.tiles[i][j].worker.get_letter()}",end='')
+
             print("|")
         print("+--+--+--+--+--+")

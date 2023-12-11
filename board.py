@@ -23,7 +23,7 @@ class Board:
         otherPlayer_pos_lst = []
         for i in range(5):
             for j in range(5):
-                if self.tiles[i][j].has_worker and (i,j) != worker1_pos and (i,j) != worker2_pos:
+                if self.tiles[i][j].has_worker() and (i,j) != worker1_pos and (i,j) != worker2_pos:
                     otherPlayer_pos_lst.append((i,j))                
         return otherPlayer_pos_lst
         

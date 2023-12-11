@@ -6,11 +6,12 @@ from exceptions import InvalidDirectionError
 
 class Player:
     def __init__(self, player, game): # game
-        self._initialize_workers(player)
+
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._selectedWorker = None
         self.game = game
         self.moveCommand = Move()
+        self._initialize_workers(player)
 
     def _initialize_workers(self, player):
         """initialize workers within a given player"""
@@ -19,6 +20,11 @@ class Player:
             self.workers = [Worker("A", 3, 1), Worker("B", 1, 3)]
         elif player == 2:
             self.workers = [Worker("Y", 1, 1), Worker("Z", 3, 3)]
+        
+        # update the board
+        for worker in self.workers:
+            self.game.update_board_step([0,0], worker.get_position(), worker)
+
 
     def get_workers(self):
         """returns a list of the workers of the player"""
@@ -160,7 +166,7 @@ class HeuristicAI(Player):
         letter_to_print = self._selectedWorker.get_letter()
         return f"{letter_to_print},{step_direction},{build_direction}"
 
-    def get_move_score(self, selectedWorkerNum, valid_moves_lst)
+    def get_move_score(self, selectedWorkerNum, valid_moves_lst):
         '''Returns list containing the (valid) move with the maximum move_score for the selected worker of the form:
         [move (list), move_score (int)]
         '''
