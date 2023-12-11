@@ -51,7 +51,6 @@ class Game:
                     pass
                 else:
                     proposed_dir = self.get_dir_from_coords((i, j))
-                    # print(f"Proposed dir: {proposed_dir}")
                     if self.check_move_dir(selectedWorker, dir_type, proposed_dir):
                         valid_moves_lst.append(proposed_dir)
         return valid_moves_lst
@@ -112,9 +111,9 @@ class Game:
         distance_from_nonMW_to_w2 = abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]) + abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1])
 
         distance_score = min(distance_from_movedW_to_w1, distance_from_nonMW_to_w1) + min(distance_from_movedW_to_w2, distance_from_nonMW_to_w2)
-        print(f"{movedWorkerPos}, {nonMovedWorkerPos}")
-        print(f"{otherPlayer_w1_pos}, {otherPlayer_w2_pos}")
-        print(f"{distance_from_movedW_to_w1}, {distance_from_nonMW_to_w1}, {distance_from_movedW_to_w2}, {distance_from_nonMW_to_w2}")
+        # print(f"{movedWorkerPos}, {nonMovedWorkerPos}")
+        # print(f"{otherPlayer_w1_pos}, {otherPlayer_w2_pos}")
+        # print(f"{distance_from_movedW_to_w1}, {distance_from_nonMW_to_w1}, {distance_from_movedW_to_w2}, {distance_from_nonMW_to_w2}")
 
         return 8 - distance_score
 
