@@ -1,4 +1,4 @@
-from board import Board
+from memento import Board, Caretaker
 from exceptions import InvalidDirectionError
 
 class Game:
@@ -6,6 +6,7 @@ class Game:
         # initialize the players within the board
         # self.players = [Player(1), Player(2)]
         self._board = Board()
+        self.caretaker = Caretaker(self._board)
         self.test_dict = {'tuple': (23, 32)}
         self.direction_dict = {"n":(-1,0), 
                                "ne":(-1,1),
@@ -134,22 +135,6 @@ class Game:
     # Helper function to return value for any key
     def get_coords_from_key(self, key):
         return self.direction_dict[key]
-        
-    # def is_valid_worker(self, player, worker):
-    #     if player == 1:
-    #         if self.players[0].is_players_worker(worker):
-    #             return True
-    #         if self.players[1].is_players_worker(worker):
-    #             print("That is not your worker")
-    #             return False
-    #     else:
-    #         if self.players[1].is_players_worker(worker):
-    #             return True
-    #         if self.players[0].is_players_worker(worker):
-    #             print("That is not your worker")
-    #             return False
-    #     print("Not a valid worker")
-    #     return False
 
     def update_board_step(self, worker_oldPos, worker_newPos, selectedWorker):
         self._board.update_tile(worker_oldPos)
@@ -159,24 +144,25 @@ class Game:
         self._board.update_tile_build(build_pos)
 
     
-    def display_board(self, all_workers):
-        for i in range(5):
-            print("+--+--+--+--+--+")
-            for j in range(5):
-                print(f"|{self._board.tiles[i][j].level}",end='')
+    def display_board(self):
+        # for i in range(5):
+        #     print("+--+--+--+--+--+")
+        #     for j in range(5):
+        #         print(f"|{self._board.tiles[i][j].level}",end='')
+        #         if (self._board.tiles[i][j].has_worker() == False):
+        #             print(" ", end='')
+        #         else:
+        #             print(f"{self._board.tiles[i][j].worker.get_letter()}",end='')
 
-                # # if there is a worker on the tile or not
-                # is_worker = False
-                # for worker in all_workers:
-                #     if [i,j] == worker.get_position():
-                #         print(f"{worker.get_letter()}",end='')
-                #         is_worker = True
-                # if is_worker == False:
-                #     print(" ", end='')
-                if (self._board.tiles[i][j].has_worker() == False):
-                    print(" ", end='')
-                else:
-                    print(f"{self._board.tiles[i][j].worker.get_letter()}",end='')
+        #     print("|")
+        # print("+--+--+--+--+--+")
+        self.caretaker.show_board()
 
-            print("|")
-        print("+--+--+--+--+--+")
+    def save_board(self):
+        self.caretaker.save()
+
+    def undo_board(self):
+        return self.caretaker.undo()
+
+    def redo_board(self):
+        return self.caretaker.redo()

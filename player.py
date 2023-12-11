@@ -203,6 +203,7 @@ class PlayerContext:
     
     def movePlayer(self):
         self._player.move()
+        self._player.game.save_board()
     
     def check_winner(self):
         return self._player.check_winner()
@@ -212,3 +213,6 @@ class PlayerContext:
     
     def get_workers(self):
         return self._player.get_workers()
+    
+    def player_type_human(self):
+        return str(type(self._player).__name__) == "HumanPlayer"

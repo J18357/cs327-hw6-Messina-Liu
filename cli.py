@@ -16,9 +16,13 @@ class Menu:
         self._valid_directions = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
         self._turn = 1
         self._gameOver = False
+        self._undo_redo = True if enable_undo_redo == "on" else False
         # initialize the players
         print(f"player 1 type: {white_player_type}, player 2 type: {blue_player_type}")
         self.players = [self._set_player_strat(white_player_type, 1), self._set_player_strat(blue_player_type, 2)]
+
+        # save the game
+        self._game.save_board()
         
     def _set_player_strat(self, player_type, playerNum):
         # Assumes that player_type is valid
@@ -35,20 +39,18 @@ class Menu:
     
     def _display_menu(self):
         # print the game board
-        workers_lst = self.get_all_workers()
-        self._game.display_board(workers_lst)
+        # workers_lst = self.get_all_workers()
+        self._game.display_board()
         
         # print the turn and current player
         print(f"Turn: {self._turn}, {self.display_player()}", end="")
 
-        print(self._game.get_curr_score(self.players[0].get_workers()))
         # TODO: if score display is enabled, print score
-        # if (sys.argv[4] == "on"):
-        #     self._board.display_score()
-        # else:
-        #     print()
+        if (sys.argv[4] == "on"):
+            print(f", {self._game.get_curr_score(self.players[0].get_workers())}")
+        else:
+            print()
 
-        print()
     
     def display_player(self):
         # displays player 1 or 2
@@ -78,9 +80,33 @@ class Menu:
             
             # displays turn number and player
             self._display_menu()
-            self.players[self.get_curr_player() - 1].movePlayer()
-            
-            self._turn = self._turn + 1
+
+            # asks for undo/redo if that is enabled
+            if self._undo_redo == True and self.players[self.get_curr_player() - 1].player_type_human():
+                undo_redo_next = input("undo, redo, or next\n")
+                while (undo_redo_next not in  ["undo", "redo", "next"]):
+                    undo_redo_next = input("undo, redo, or next\n")
+                    
+                if undo_redo_next == "undo":
+                    if self.players[self.get_curr_player() % 2].player_type_human() == False:
+                        if self._game.undo_board():
+                            self._game.undo_board()
+                            self._turn -= 2
+                    elif self._game.undo_board():
+                        self._turn -= 1
+                elif undo_redo_next == "redo":
+                    if self.players[self.get_curr_player() % 2].player_type_human() == False:
+                        if self._game.redo_board():
+                            self._game.redo_board()
+                            self._turn += 2
+                    elif self._game.redo_board():
+                        self._turn += 1
+                else:
+                    self.players[self.get_curr_player() - 1].movePlayer()
+                    self._turn = self._turn + 1
+            else:
+                self.players[self.get_curr_player() - 1].movePlayer()
+                self._turn = self._turn + 1
         
         # game over
         if self.check_game_ended == 1:
@@ -113,14 +139,6 @@ class Menu:
             self.run()
         else:
             self._quit()
-    
-    # def _save(self):
-    #     with open("Bank_save.pickle", "wb") as f:
-    #         pickle.dump(self._bank, f)
-
-    # def _load(self):
-    #     with open("Bank_save.pickle", "rb") as f:   
-    #         self._bank = pickle.load(f)
 
     def _quit(self):
         sys.exit(0)
