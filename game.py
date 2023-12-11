@@ -60,6 +60,7 @@ class Game:
         '''Returns list of valid moves for the selected worker in the form:
         [position after move (tuple),  step direction (letter), build direction (letter)]
         '''
+        valid_moves_lst = []
         valid_steps = self.enumerate_moves(selectedWorker, "move")
         for valid_step in valid_steps:
             # worker's position after proposed step
