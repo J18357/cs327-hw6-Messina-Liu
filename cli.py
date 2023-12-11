@@ -41,6 +41,7 @@ class Menu:
         # print the turn and current player
         print(f"Turn: {self._turn}, {self.display_player()}", end="")
 
+        print(self._game.get_curr_score(self.players[0].get_workers()))
         # TODO: if score display is enabled, print score
         # if (sys.argv[4] == "on"):
         #     self._board.display_score()

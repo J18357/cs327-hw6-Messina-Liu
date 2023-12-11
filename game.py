@@ -104,7 +104,6 @@ class Game:
         otherPlayer_pos = self._board.get_otherPlayer_positions(movedWorkerPos, nonMovedWorkerPos)
         otherPlayer_w1_pos = otherPlayer_pos[0]
         otherPlayer_w2_pos = otherPlayer_pos[1]
-        print(otherPlayer_pos)
 
         distance_from_movedW_to_w1 = abs(movedWorkerPos[0] - otherPlayer_w1_pos[0]) + abs(movedWorkerPos[1] - otherPlayer_w1_pos[1])
         distance_from_nonMW_to_w1 = abs(nonMovedWorkerPos[0] - otherPlayer_w1_pos[0]) + abs(nonMovedWorkerPos[1] - otherPlayer_w1_pos[1])
