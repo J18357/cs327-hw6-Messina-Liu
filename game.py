@@ -64,6 +64,7 @@ class Game:
         [position after move (tuple),  step direction (letter), build direction (letter)]
         '''
         valid_moves_lst = []
+        valid_moves_lst = []
         valid_steps = self.enumerate_moves(selectedWorker, "move")
 
         for valid_step in valid_steps:
@@ -117,6 +118,10 @@ class Game:
         distance_from_nonMW_to_w2 = max(abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]), abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1]))
 
         distance_score = min(distance_from_movedW_to_w1, distance_from_nonMW_to_w1) + min(distance_from_movedW_to_w2, distance_from_nonMW_to_w2)
+        # print(f"{movedWorkerPos}, {nonMovedWorkerPos}")
+        # print(f"{otherPlayer_w1_pos}, {otherPlayer_w2_pos}")
+        # print(f"{distance_from_movedW_to_w1}, {distance_from_nonMW_to_w1}, {distance_from_movedW_to_w2}, {distance_from_nonMW_to_w2}")
+
         return 8 - distance_score
 
     def get_curr_score(self, workers_lst):
