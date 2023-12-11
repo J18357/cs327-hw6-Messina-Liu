@@ -25,7 +25,6 @@ class Player:
         for worker in self.workers:
             self.game.update_board_step([0,0], worker.get_position(), worker)
 
-
     def get_workers(self):
         """returns a list of the workers of the player"""
         return self.workers
@@ -92,6 +91,8 @@ class HumanPlayer(Player):
         letter_to_print = self._selectedWorker.get_letter()
         return f"{letter_to_print},{step_direction},{build_direction}"
 
+
+
     def _select_direction(self, dir_type):
         '''dir_type: String, either "move" or "build"'''
 
@@ -139,6 +140,10 @@ class RandomAI(Player):
         letter_to_print = self._selectedWorker.get_letter()
         return f"{letter_to_print},{step_direction},{build_direction}"
             
+
+    def move(self):
+        pass
+    pass
 
 class HeuristicAI(Player):
     def move(self):
@@ -195,6 +200,10 @@ class HeuristicAI(Player):
                 max_move = move
                 max_move_score = move_score
         return [max_move, max_move_score]
+
+    def move(self):
+        pass
+    pass
 
 class PlayerContext:
     def __init__(self, player_type_with_params: Player):

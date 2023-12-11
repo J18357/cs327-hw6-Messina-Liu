@@ -9,6 +9,8 @@ class Move():
                                "sw":(1,-1),
                                "w":(0,-1),
                                "nw":(-1,-1)}
+        self._move = None
+        
     
     def execute(self, game, selectedWorker, step_direction=None, build_direction=None):
         if not step_direction is None:
