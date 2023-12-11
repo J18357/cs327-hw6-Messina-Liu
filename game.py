@@ -1,10 +1,8 @@
-from memento import Board, Caretaker
+from board import Board, Caretaker
 from exceptions import InvalidDirectionError
 
 class Game:
     def __init__(self):
-        # initialize the players within the board
-        # self.players = [Player(1), Player(2)]
         self._board = Board()
         self.caretaker = Caretaker(self._board)
         self.test_dict = {'tuple': (23, 32)}
@@ -47,26 +45,31 @@ class Game:
     def enumerate_moves(self, selectedWorker, dir_type):
         '''Returns list of valid step OR build (dir_type) moves in tuple form (ex: (1,1)) for the selected worker'''
         valid_moves_lst = []
+
+        # print(f"here {valid_moves_lst}")
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if (i == 0 and j == 0):
                     pass
                 else:
                     proposed_dir = self.get_dir_from_coords((i, j))
-                    # print(f"Proposed dir: {proposed_dir}")
+                    # print(f"proposed {proposed_dir}")
                     if self.check_move_dir(selectedWorker, dir_type, proposed_dir):
                         valid_moves_lst.append(proposed_dir)
+                        # print(valid_moves_lst)
         return valid_moves_lst
     
     def enumerate_full_moves(self, selectedWorker):
         '''Returns list of valid moves for the selected worker in the form:
         [position after move (tuple),  step direction (letter), build direction (letter)]
         '''
+        valid_moves_lst = []
         valid_steps = self.enumerate_moves(selectedWorker, "move")
+
         for valid_step in valid_steps:
             # worker's position after proposed step
-            proposed_currPos_row = selectedWorker.get_position()[0] + valid_step[0]
-            proposed_currPos_col = selectedWorker.get_position()[1] + valid_step[1]
+            proposed_currPos_row = selectedWorker.get_position()[0] + self.direction_dict[valid_step][0]
+            proposed_currPos_col = selectedWorker.get_position()[1] + self.direction_dict[valid_step][1]
 
             for i in range(-1, 2):
                 for j in range(-1, 2):
@@ -77,8 +80,9 @@ class Game:
                     # Get valid build directions using worker's (fake) position after proposed step
                     if self.check_move_dir(selectedWorker, "build", proposed_build_dir, proposal=(proposed_currPos_row, proposed_currPos_col)):
                         # Both step direction and build direction are valid
-                        valid_step_letter = self.get_dir_from_coords(valid_step) # convert direction to letter for debug/visualize
-                        valid_build_letter = self.get_dir_from_coords(proposed_build_dir)
+                        valid_step_letter = valid_step
+                        valid_build_letter = proposed_build_dir
+
                         proposed_pos = (proposed_currPos_row, proposed_currPos_col)
 
                         valid_moves_lst.append([proposed_pos, valid_step_letter, valid_build_letter])
@@ -106,11 +110,11 @@ class Game:
         otherPlayer_w1_pos = otherPlayer_pos[0]
         otherPlayer_w2_pos = otherPlayer_pos[1]
 
-        distance_from_movedW_to_w1 = abs(movedWorkerPos[0] - otherPlayer_w1_pos[0]) + abs(movedWorkerPos[1] - otherPlayer_w1_pos[1])
-        distance_from_nonMW_to_w1 = abs(nonMovedWorkerPos[0] - otherPlayer_w1_pos[0]) + abs(nonMovedWorkerPos[1] - otherPlayer_w1_pos[1])
+        distance_from_movedW_to_w1 = max(abs(movedWorkerPos[0] - otherPlayer_w1_pos[0]), abs(movedWorkerPos[1] - otherPlayer_w1_pos[1]))
+        distance_from_nonMW_to_w1 = max(abs(nonMovedWorkerPos[0] - otherPlayer_w1_pos[0]), abs(nonMovedWorkerPos[1] - otherPlayer_w1_pos[1]))
         
-        distance_from_movedW_to_w2 = abs(movedWorkerPos[0] - otherPlayer_w2_pos[0]) + abs(movedWorkerPos[1] - otherPlayer_w2_pos[1])
-        distance_from_nonMW_to_w2 = abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]) + abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1])
+        distance_from_movedW_to_w2 = max(abs(movedWorkerPos[0] - otherPlayer_w2_pos[0]), abs(movedWorkerPos[1] - otherPlayer_w2_pos[1]))
+        distance_from_nonMW_to_w2 = max(abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]), abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1]))
 
         distance_score = min(distance_from_movedW_to_w1, distance_from_nonMW_to_w1) + min(distance_from_movedW_to_w2, distance_from_nonMW_to_w2)
         return 8 - distance_score
@@ -123,7 +127,7 @@ class Game:
         center_score = self.get_center_score(worker1_pos, worker2_pos)
         distance_score = self.get_distance_score(worker1_pos, worker2_pos)
 
-        return f"({height_score},{center_score},{distance_score})"
+        return f"({height_score}, {center_score}, {distance_score})"
 
     # Helper function to return key for any value
     def get_dir_from_coords(self, val):
@@ -145,24 +149,22 @@ class Game:
 
     
     def display_board(self):
-        # for i in range(5):
-        #     print("+--+--+--+--+--+")
-        #     for j in range(5):
-        #         print(f"|{self._board.tiles[i][j].level}",end='')
-        #         if (self._board.tiles[i][j].has_worker() == False):
-        #             print(" ", end='')
-        #         else:
-        #             print(f"{self._board.tiles[i][j].worker.get_letter()}",end='')
-
-        #     print("|")
-        # print("+--+--+--+--+--+")
         self.caretaker.show_board()
 
     def save_board(self):
         self.caretaker.save()
 
     def undo_board(self):
-        return self.caretaker.undo()
+        result = self.caretaker.undo()
+        return result
 
     def redo_board(self):
         return self.caretaker.redo()
+    
+    def update_workers(self, workers):
+        for worker in workers:
+            for i in range(5):
+                for j in range(5):
+                    if self._board.tiles[i][j].has_worker() and self._board.tiles[i][j].worker.get_letter() == worker.get_letter():
+                        worker.row = self._board.tiles[i][j].worker.row
+                        worker.col = self._board.tiles[i][j].worker.col

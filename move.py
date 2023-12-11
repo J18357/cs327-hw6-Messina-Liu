@@ -29,5 +29,3 @@ class Move():
             game.update_board_build([build_pos_row, build_pos_col])
         else:
             print("No direction to move was given")
-        
-        # TODO: score?

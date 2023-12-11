@@ -1,6 +1,6 @@
-# from tile import Tile
-
 class Worker:
+    """two workers per player, each worker has a letter and its row and col"""
+    
     def __init__(self, letter='', row_pos=None, col_pos=None):
         self.letter = letter
         self.row = row_pos
@@ -20,6 +20,3 @@ class Worker:
     def step(self, new_row, new_col):
         self.row = new_row
         self.col = new_col
-        
-    # def build(self, row, col):
-        # 

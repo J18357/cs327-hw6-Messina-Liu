@@ -45,6 +45,7 @@ class Player:
         return None
         
     def check_winner(self):
+        """checks if either of the player's workers are on level 3 (if yes then they win)"""
         for worker in self.workers:
             workerPos = worker.get_position()
             if self.game.get_tile_level(workerPos) == 3:
@@ -52,7 +53,9 @@ class Player:
         return False
     
     def check_loser(self):
+        """checks if either of the player's workers can move (if no then they lose)"""
         if len(self.game.enumerate_moves(self.workers[0], "move")) == 0 and len(self.game.enumerate_moves(self.workers[1], "move")) == 0:
+            print("here is we")
             return True
         else:
             return False
@@ -67,7 +70,7 @@ class HumanPlayer(Player):
         while selectedWorker is None:
             workerInput = input("Select a worker to move\n") # TODO: Check TypeError?
             if workerInput not in ["A", "B", "Y", "Z"]:
-                print("Not a valid worker\n")
+                print("Not a valid worker")
             elif not self.is_players_worker(workerInput):
                 print("That is not your worker")
             else:
@@ -85,6 +88,7 @@ class HumanPlayer(Player):
         step_direction = self._select_direction("move")
         self.moveCommand.execute(self.game, selectedWorker, step_direction=step_direction)
 
+        # building after the player moves
         build_direction = self._select_direction("build")
         self.moveCommand.execute(self.game, selectedWorker, build_direction=build_direction)
         
@@ -128,8 +132,11 @@ class RandomAI(Player):
         if len(workers_valid_moves) == 0:
             # if worker is unable to move, select the other worker
             self._selectedWorker = self.workers[(selectedWorkerNum + 1) % 2]
-        
+            # find other worker's valud moves
+            workers_valid_moves = self.game.enumerate_moves(self._selectedWorker, "move")
+    
         step_direction = random.choice(workers_valid_moves)
+
         self.moveCommand.execute(self.game, self._selectedWorker, step_direction=step_direction)
 
         worker_valid_builds = self.game.enumerate_moves(self._selectedWorker, "build")
@@ -139,37 +146,38 @@ class RandomAI(Player):
         
         letter_to_print = self._selectedWorker.get_letter()
         return f"{letter_to_print},{step_direction},{build_direction}"
-            
 
-    def move(self):
-        pass
-    pass
 
 class HeuristicAI(Player):
     def move(self):
+        
+        # get a list of all possible moves for each of the player's workers
         worker1_moves_lst = self.game.enumerate_full_moves(self.workers[0])
         worker2_moves_lst = self.game.enumerate_full_moves(self.workers[1])
 
-        worker1_max_move_lst = self.get_move_scores(0, worker1_moves_lst)
-        worker2_max_move_lst = self.get_move_scores(1, worker2_moves_lst)
+        # determine the "best" move to make (sum of scores)
+        worker1_max_move_lst = self.get_move_score(0, worker1_moves_lst)
+        worker2_max_move_lst = self.get_move_score(1, worker2_moves_lst)
 
         # compare max move_score from each worker's list
         # ex: move = [position_after_move=(3,4), step_dir="n", build_dir="s"]
         if worker1_max_move_lst[1] > worker2_max_move_lst[1]:
             step_letter = worker1_max_move_lst[0][1]
             build_letter = worker1_max_move_lst[0][2]
+            self._selectedWorker = self.workers[0]
         else:
             step_letter = worker2_max_move_lst[0][1]
             build_letter = worker2_max_move_lst[0][2]
-        
-        step_direction = self.game.get_coords_from_key(step_letter)
-        self.moveCommand.execute(self.game, self._selectedWorker, step_direction=step_direction)
+            self._selectedWorker = self.workers[1]
 
-        build_direction = self.game.get_coords_from_key(build_letter)
-        self.moveCommand.execute(self.game, self._selectedWorker, build_direction=build_direction)
+        # step_direction = self.game.get_coords_from_key(step_letter)
+        self.moveCommand.execute(self.game, self._selectedWorker, step_direction=step_letter)
+
+        # build_direction = self.game.get_coords_from_key(build_letter)
+        self.moveCommand.execute(self.game, self._selectedWorker, build_direction=build_letter)
 
         letter_to_print = self._selectedWorker.get_letter()
-        return f"{letter_to_print},{step_direction},{build_direction}"
+        return f"{letter_to_print},{step_letter},{build_letter}"
 
     def get_move_score(self, selectedWorkerNum, valid_moves_lst):
         '''Returns list containing the (valid) move with the maximum move_score for the selected worker of the form:
@@ -179,8 +187,7 @@ class HeuristicAI(Player):
         max_move = None
         for move in valid_moves_lst:
             # ex: move = [position_after_move=(3,4), step_dir="n", build_dir="s"]
-            # selectedWorkerNum = worker that did the move (0 or 1)
-            nonMovedWorkerPos = self.workers[3 - selectedWorkerNum].get_position()
+            nonMovedWorkerPos = self.workers[selectedWorkerNum].get_position()
             movedWorkerPos = move[0]
 
             # height_score: sum of the heights of the buildings a player's workers stand on
@@ -201,17 +208,13 @@ class HeuristicAI(Player):
                 max_move_score = move_score
         return [max_move, max_move_score]
 
-    def move(self):
-        pass
-    pass
-
 class PlayerContext:
     def __init__(self, player_type_with_params: Player):
         '''For encapsulation of Player class from Client'''
         self._player = player_type_with_params
     
     def movePlayer(self):
-        self._player.move()
+        print(self._player.move(), end="")
         self._player.game.save_board()
     
     def check_winner(self):
