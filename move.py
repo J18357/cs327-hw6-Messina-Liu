@@ -28,4 +28,3 @@ class Move():
         else:
             print("No direction to move was given")
         
-        # TODO: score?

@@ -6,7 +6,6 @@ class Game:
         # initialize the players within the board
         # self.players = [Player(1), Player(2)]
         self._board = Board()
-        self.test_dict = {'tuple': (23, 32)}
         self.direction_dict = {"n":(-1,0), 
                                "ne":(-1,1),
                                "e":(0,1),
@@ -112,6 +111,10 @@ class Game:
         distance_from_nonMW_to_w2 = abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]) + abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1])
 
         distance_score = min(distance_from_movedW_to_w1, distance_from_nonMW_to_w1) + min(distance_from_movedW_to_w2, distance_from_nonMW_to_w2)
+        print(f"{movedWorkerPos}, {nonMovedWorkerPos}")
+        print(f"{otherPlayer_w1_pos}, {otherPlayer_w2_pos}")
+        print(f"{distance_from_movedW_to_w1}, {distance_from_nonMW_to_w1}, {distance_from_movedW_to_w2}, {distance_from_nonMW_to_w2}")
+
         return 8 - distance_score
 
     def get_curr_score(self, workers_lst):
@@ -158,7 +161,11 @@ class Game:
     def update_board_build(self, build_pos):
         self._board.update_tile_build(build_pos)
 
-    
+    def init_board(self, all_workers):
+        for worker in all_workers:
+            workerPos = worker.get_position()
+            self._board.update_tile(workerPos, worker)
+        
     def display_board(self, all_workers):
         for i in range(5):
             print("+--+--+--+--+--+")

@@ -19,6 +19,10 @@ class Menu:
         # initialize the players
         print(f"player 1 type: {white_player_type}, player 2 type: {blue_player_type}")
         self.players = [self._set_player_strat(white_player_type, 1), self._set_player_strat(blue_player_type, 2)]
+        workers_lst = self.get_all_workers()
+        self._game.init_board(workers_lst)
+
+        self._enable_score = enable_score
         
     def _set_player_strat(self, player_type, playerNum):
         # Assumes that player_type is valid
@@ -26,7 +30,7 @@ class Menu:
             return PlayerContext(HumanPlayer(playerNum, game=self._game))
         elif player_type == "random":
             return PlayerContext(RandomAI(playerNum, game=self._game))
-        elif player_type == "heurestic":
+        elif player_type == "heuristic":
             return PlayerContext(HeuristicAI(playerNum, game=self._game))
     
     def get_curr_player(self):
@@ -37,9 +41,13 @@ class Menu:
         # print the game board
         workers_lst = self.get_all_workers()
         self._game.display_board(workers_lst)
-        
-        # print the turn and current player
-        print(f"Turn: {self._turn}, {self.display_player()}", end="")
+
+        if self._enable_score == "on":
+            # print the turn, current player, and score
+            print(f"Turn: {self._turn}, {self.display_player()}, {self._game.get_curr_score(workers_lst)}", end="")
+        else:
+            # print the turn and current player
+            print(f"Turn: {self._turn}, {self.display_player()}", end="")
 
         print(self._game.get_curr_score(self.players[0].get_workers()))
         # TODO: if score display is enabled, print score
@@ -78,7 +86,12 @@ class Menu:
             
             # displays turn number and player
             self._display_menu()
-            self.players[self.get_curr_player() - 1].movePlayer()
+            move_output = self.players[self.get_curr_player() - 1].movePlayer()
+            if self._enable_score == "on":
+                print_out = move_output + self._game.get_curr_score()
+                print(print_out)
+            else:
+                print(move_output)
             
             self._turn = self._turn + 1
         
