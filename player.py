@@ -84,7 +84,7 @@ class HumanPlayer(Player):
         self.moveCommand.execute(self.game, selectedWorker, build_direction=build_direction)
         
         letter_to_print = self._selectedWorker.get_letter()
-        print(f"{letter_to_print},{step_direction},{build_direction}")
+        return f"{letter_to_print},{step_direction},{build_direction}"
 
     def _select_direction(self, dir_type):
         '''dir_type: String, either "move" or "build"'''
@@ -131,11 +131,64 @@ class RandomAI(Player):
         self.moveCommand.execute(self.game, self._selectedWorker, build_direction=build_direction)
         
         letter_to_print = self._selectedWorker.get_letter()
-        print(f"{letter_to_print},{step_direction},{build_direction}")
+        return f"{letter_to_print},{step_direction},{build_direction}"
             
 
 class HeuristicAI(Player):
-    pass
+    def move(self):
+        worker1_moves_lst = self.game.enumerate_full_moves(self.workers[0])
+        worker2_moves_lst = self.game.enumerate_full_moves(self.workers[1])
+
+        worker1_max_move_lst = self.get_move_scores(0, worker1_moves_lst)
+        worker2_max_move_lst = self.get_move_scores(1, worker2_moves_lst)
+
+        # compare max move_score from each worker's list
+        # ex: move = [position_after_move=(3,4), step_dir="n", build_dir="s"]
+        if worker1_max_move_lst[1] > worker2_max_move_lst[1]:
+            step_letter = worker1_max_move_lst[0][1]
+            build_letter = worker1_max_move_lst[0][2]
+        else:
+            step_letter = worker2_max_move_lst[0][1]
+            build_letter = worker2_max_move_lst[0][2]
+        
+        step_direction = self.game.get_coords_from_key(step_letter)
+        self.moveCommand.execute(self.game, self._selectedWorker, step_direction=step_direction)
+
+        build_direction = self.game.get_coords_from_key(build_letter)
+        self.moveCommand.execute(self.game, self._selectedWorker, build_direction=build_direction)
+
+        letter_to_print = self._selectedWorker.get_letter()
+        return f"{letter_to_print},{step_direction},{build_direction}"
+
+    def get_move_score(self, selectedWorkerNum, valid_moves_lst)
+        '''Returns list containing the (valid) move with the maximum move_score for the selected worker of the form:
+        [move (list), move_score (int)]
+        '''
+        max_move_score = 0
+        max_move = None
+        for move in valid_moves_lst:
+            # ex: move = [position_after_move=(3,4), step_dir="n", build_dir="s"]
+            # selectedWorkerNum = worker that did the move (0 or 1)
+            nonMovedWorkerPos = self.workers[3 - selectedWorkerNum].get_position()
+            movedWorkerPos = move[0]
+
+            # height_score: sum of the heights of the buildings a player's workers stand on
+            height_score = self.game.get_height_score(nonMovedWorkerPos, movedWorkerPos)
+
+            # center_score: 
+            center_score = self.game.get_center_score(nonMovedWorkerPos, movedWorkerPos)
+            
+            # distance_score: sum of the minimum distance to the opponent's workers
+            distance_score = self.game.get_distance_score(movedWorkerPos, nonMovedWorkerPos)
+
+            c1 = 3
+            c2 = 2
+            c3 = 1
+            move_score = c1*height_score + c2*center_score + c3*distance_score
+            if move_score >= max_move_score:
+                max_move = move
+                max_move_score = move_score
+        return [max_move, max_move_score]
 
 class PlayerContext:
     def __init__(self, player_type_with_params: Player):
