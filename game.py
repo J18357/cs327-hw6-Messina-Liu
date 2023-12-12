@@ -1,5 +1,4 @@
 from board import Board, Caretaker
-from exceptions import InvalidDirectionError
 
 class Game:
     def __init__(self):
@@ -15,11 +14,9 @@ class Game:
                                "w":(0,-1),
                                "nw":(-1,-1)}
     
-    def check_move_dir(self, selectedWorker, dir_type, dir, proposal=None):
+    def check_move_dir(self, workerPos, dir_type, dir):
         input_dir = self.direction_dict[dir] # a tuple
-        workerPosition = selectedWorker.get_position()
-        if not proposal is None:
-            workerPosition = proposal
+        workerPosition = workerPos
         move_row = workerPosition[0] + input_dir[0]
         move_col = workerPosition[1] + input_dir[1]
         # check still in board
@@ -42,6 +39,12 @@ class Game:
         worker_tile = self._board.tiles[workerPosition[0]][workerPosition[1]]
         return worker_tile.get_level()
     
+    def check_moves_adaptor(self, selectedWorker, dir_type, dir, proposal=None):
+        workerPos = selectedWorker.get_position()
+        if not proposal is None:
+            workerPos = proposal
+        return self.check_move_dir(workerPos, dir_type, dir)
+    
     def enumerate_moves(self, selectedWorker, dir_type):
         '''Returns list of valid step OR build (dir_type) moves in tuple form (ex: (1,1)) for the selected worker'''
         valid_moves_lst = []
@@ -54,7 +57,7 @@ class Game:
                 else:
                     proposed_dir = self.get_dir_from_coords((i, j))
                     # print(f"proposed {proposed_dir}")
-                    if self.check_move_dir(selectedWorker, dir_type, proposed_dir):
+                    if self.check_moves_adaptor(selectedWorker, dir_type, proposed_dir):
                         valid_moves_lst.append(proposed_dir)
                         # print(valid_moves_lst)
         return valid_moves_lst
@@ -63,7 +66,6 @@ class Game:
         '''Returns list of valid moves for the selected worker in the form:
         [position after move (tuple),  step direction (letter), build direction (letter)]
         '''
-        valid_moves_lst = []
         valid_moves_lst = []
         valid_steps = self.enumerate_moves(selectedWorker, "move")
 
@@ -79,7 +81,7 @@ class Game:
                 else:
                     proposed_build_dir = self.get_dir_from_coords((i, j))
                     # Get valid build directions using worker's (fake) position after proposed step
-                    if self.check_move_dir(selectedWorker, "build", proposed_build_dir, proposal=(proposed_currPos_row, proposed_currPos_col)):
+                    if self.check_moves_adaptor(selectedWorker, "build", proposed_build_dir, proposal=(proposed_currPos_row, proposed_currPos_col)):
                         # Both step direction and build direction are valid
                         valid_step_letter = valid_step
                         valid_build_letter = proposed_build_dir
@@ -118,10 +120,6 @@ class Game:
         distance_from_nonMW_to_w2 = max(abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]), abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1]))
 
         distance_score = min(distance_from_movedW_to_w1, distance_from_nonMW_to_w1) + min(distance_from_movedW_to_w2, distance_from_nonMW_to_w2)
-        # print(f"{movedWorkerPos}, {nonMovedWorkerPos}")
-        # print(f"{otherPlayer_w1_pos}, {otherPlayer_w2_pos}")
-        # print(f"{distance_from_movedW_to_w1}, {distance_from_nonMW_to_w1}, {distance_from_movedW_to_w2}, {distance_from_nonMW_to_w2}")
-
         return 8 - distance_score
 
     def get_curr_score(self, workers_lst):
@@ -134,15 +132,15 @@ class Game:
 
         return f"({height_score}, {center_score}, {distance_score})"
 
-    # Helper function to return key for any value
     def get_dir_from_coords(self, val):
+        '''Helper function to return key for any value'''
         for key, value in self.direction_dict.items():
             if val == value:
                 return key
         return None
     
-    # Helper function to return value for any key
     def get_coords_from_key(self, key):
+        '''Helper function to return value for any key'''
         return self.direction_dict[key]
 
     def update_board_step(self, worker_oldPos, worker_newPos, selectedWorker):

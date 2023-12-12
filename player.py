@@ -1,8 +1,6 @@
 from worker import Worker
 from move import Move
 import random
-# from game import Game
-from exceptions import InvalidDirectionError
 from abc import abstractmethod
 
 class Player:
