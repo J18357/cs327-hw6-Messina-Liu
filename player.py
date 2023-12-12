@@ -3,6 +3,7 @@ from move import Move
 import random
 # from game import Game
 from exceptions import InvalidDirectionError
+from abc import abstractmethod
 
 class Player:
     def __init__(self, player, game): # game
@@ -59,6 +60,10 @@ class Player:
             return True
         else:
             return False
+        
+    @abstractmethod
+    def move(self):
+        pass
 
 class HumanPlayer(Player):
 

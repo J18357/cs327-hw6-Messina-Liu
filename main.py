@@ -32,7 +32,7 @@ class Menu:
             return PlayerContext(HumanPlayer(playerNum, game=self._game))
         elif player_type == "random":
             return PlayerContext(RandomAI(playerNum, game=self._game))
-        elif player_type == "heurestic":
+        elif player_type == "heuristic":
             return PlayerContext(HeuristicAI(playerNum, game=self._game))
     
     def get_curr_player(self):
@@ -160,7 +160,7 @@ class Menu:
 
 
 if __name__ == "__main__":
-    player_types = ["human", "random", "heurestic"]
+    player_types = ["human", "random", "heuristic"]
     white_player_type = "human"
     blue_player_type = "human"
     enable_undo_redo = "off"
