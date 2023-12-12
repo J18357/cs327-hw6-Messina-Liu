@@ -1,0 +1,9 @@
+ However, there is an additional requirement that each of you submit a brief written statement summarizing your 
+ experience working on the assignment and what you learned. Upload these two files as netid.txt along with your submission. 
+ This way it's still somewhat anonymous, but we can distinguish between them.
+
+ I had a good experience working on this assignment. I slowly learned how to use git (thanks a lot to my partner's patience). There was a lot of struggly with it at first, namely the add, commit, 
+ push and pull and how those work but we got there. I then learned about choosing which pattern should be used where thanks to the ULAs as we designed the code's prospective UML. I then learned about
+ Mementos, Commands, Factory and strategy patterns as we implemented them and wrote them up for the report. I also learned about how patterns and encapsulation allow for other functions of the code 
+ to be more easily implemented as it is clear what each segment does, how to use it, and making changes elsewhere usually won't cause a problem to other unexpected parts of the code. I also learned
+ that refactoring guru is an incredible website.
