@@ -51,10 +51,9 @@ class Game:
                     pass
                 else:
                     proposed_dir = self.get_dir_from_coords((i, j))
-                    # print(f"proposed {proposed_dir}")
                     if self.check_moves_adaptor(selectedWorker, dir_type, proposed_dir):
                         valid_moves_lst.append(proposed_dir)
-                        # print(valid_moves_lst)
+
         return valid_moves_lst
     
     def enumerate_full_moves(self, selectedWorker):
@@ -70,20 +69,23 @@ class Game:
             proposed_currPos_col = selectedWorker.get_position()[1] + self.direction_dict[valid_step][1]
 
             for i in range(-1, 2):
+                print(i)
                 for j in range(-1, 2):
                     if (i == 0 and j == 0):
                         pass
-                else:
-                    proposed_build_dir = self.get_dir_from_coords((i, j))
-                    # Get valid build directions using worker's (fake) position after proposed step
-                    if self.check_moves_adaptor(selectedWorker, "build", proposed_build_dir, proposal=(proposed_currPos_row, proposed_currPos_col)):
-                        # Both step direction and build direction are valid
-                        valid_step_letter = valid_step
-                        valid_build_letter = proposed_build_dir
+                    else:
+                        proposed_build_dir = self.get_dir_from_coords((i, j))
+                      
+                        # Get valid build directions using worker's (fake) position after proposed step
+                        if self.check_moves_adaptor(selectedWorker, "build", proposed_build_dir, proposal=(proposed_currPos_row, proposed_currPos_col)):
+                            # Both step direction and build direction are valid
+                            valid_step_letter = valid_step
+                            valid_build_letter = proposed_build_dir
 
-                        proposed_pos = (proposed_currPos_row, proposed_currPos_col)
+                            proposed_pos = (proposed_currPos_row, proposed_currPos_col)
 
-                        valid_moves_lst.append([proposed_pos, valid_step_letter, valid_build_letter])
+                            valid_moves_lst.append([proposed_pos, valid_step_letter, valid_build_letter])
+
         return valid_moves_lst
     
     def get_height_score(self, worker1_pos, worker2_pos):

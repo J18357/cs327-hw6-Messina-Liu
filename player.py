@@ -54,7 +54,6 @@ class Player:
     def check_loser(self):
         """checks if either of the player's workers can move (if no then they lose)"""
         if len(self.game.enumerate_moves(self.workers[0], "move")) == 0 and len(self.game.enumerate_moves(self.workers[1], "move")) == 0:
-            print("here is we")
             return True
         else:
             return False
@@ -65,13 +64,12 @@ class Player:
 
 class HumanPlayer(Player):
 
-    # TODO: move some of this to abstract player class
     def move(self):
 
         # Might move worker selection checks into separate helper method for HumanPlayer
         selectedWorker = None
         while selectedWorker is None:
-            workerInput = input("Select a worker to move\n") # TODO: Check TypeError?
+            workerInput = input("Select a worker to move\n")
             if workerInput not in ["A", "B", "Y", "Z"]:
                 print("Not a valid worker")
             elif not self.is_players_worker(workerInput):
@@ -114,7 +112,7 @@ class HumanPlayer(Player):
                     else:
                         valid_direction = dir_input
                 else:
-                    raise ValueError # TODO: Check if should be AttributeError
+                    raise ValueError
             except ValueError:
                 print("Not a valid direction")
         return(valid_direction)
@@ -249,4 +247,4 @@ class RandomAICreator(PlayerContext):
 class HeuristicAICreator(PlayerContext):
 
     def factory_method(self, playerNum, game):
-        return  RandomAI(playerNum, game=game)
+        return  HeuristicAI(playerNum, game=game)
