@@ -27,6 +27,16 @@ class Board:
             for j in range(5):
                 row.append(Tile())
             self.tiles.append(row)
+    
+    def get_tile_has_worker(self, tilePos_row, tilePos_col):
+        '''Getter method for whether a tile has a worker. Maintains encapsulation of Tile.'''
+        aTile = self.tiles[tilePos_row][tilePos_col]
+        return aTile.has_worker()
+
+    def get_tile_level(self, tilePos_row, tilePos_col):
+        '''Getter method for a tile's level. Maintains enscapsulation of Tile.'''
+        aTile = self.tiles[tilePos_row][tilePos_col]
+        return aTile.get_level()
 
     def update_tile(self, tilePos, worker=None):
         """updates a tile's worker"""
@@ -97,7 +107,7 @@ class ConcreteMemento(Memento):
 
 class Caretaker:
     """The Caretaker doesn't depend on the Concrete Memento class. Therefore, it
-    doesn't have access to the Boards's state, stored inside the memento. It
+    doesn't have access to the Board's state, stored inside the memento. It
     works with all mementos via the base Memento interface."""
 
     def __init__(self, originator: Board):
@@ -133,7 +143,7 @@ class Caretaker:
     def redo(self):
         """goes to future saved board, returns True if redo is successful"""
 
-        # if there is no board that is in the future, don't do anythin
+        # if there is no board that is in the future, don't do anything
         if self._index == len(self._mementos)-1:
             return False
         

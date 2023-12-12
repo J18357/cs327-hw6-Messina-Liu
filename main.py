@@ -150,9 +150,12 @@ class Menu:
     def restart(self):
         """if player types in 'yes' then a new game begins with same command line areguments"""
         restartInput = input("Play again?\n")
-        if restartInput == "yes":
-            Menu(self._white_player_type, self._blue_player_type, "on" if self._undo_redo else "off", "on" if self._score_enable else "off").run()
-        else:
+        try:
+            if restartInput == "yes":
+                Menu(self._white_player_type, self._blue_player_type, "on" if self._undo_redo else "off", "on" if self._score_enable else "off").run()
+            else:
+                self._quit()
+        except AttributeError:
             self._quit()
 
     def _quit(self):
@@ -179,5 +182,3 @@ if __name__ == "__main__":
                     if sys.argv[4] == "on":
                         enable_score = sys.argv[4]
     Menu(white_player_type, blue_player_type, enable_undo_redo, enable_score).run()
-
-    # TODO: catch AttributeError from restart input > exit
