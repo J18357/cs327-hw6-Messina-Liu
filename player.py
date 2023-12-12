@@ -1,8 +1,6 @@
 from worker import Worker
 from move import Move
 import random
-# from game import Game
-# from exceptions import InvalidDirectionError
 from abc import abstractmethod
 
 class Player:
@@ -111,7 +109,7 @@ class HumanPlayer(Player):
                 dir_input = input(f"Select a direction to {dir_type} (n, ne, e, se, s, sw, w, nw)\n")
                 if dir_input.lower() in self._valid_directions:
                     dir_input = dir_input.lower()
-                    if self.game.check_move_dir(self._selectedWorker, dir_type, dir_input) == False:
+                    if self.game.check_move_dir(self._selectedWorker.get_position(), dir_type, dir_input) == False:
                         print(f"Cannot {dir_type} {dir_input}")
                     else:
                         valid_direction = dir_input

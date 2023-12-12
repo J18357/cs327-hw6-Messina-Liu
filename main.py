@@ -1,8 +1,6 @@
 import sys
 from game import Game
-from player import PlayerContext, HumanCreator, RandomAICreator, HeuristicAICreator#HumanPlayer, RandomAI, HeuristicAI, 
-
-# from exceptions import InvalidDirectionError
+from player import PlayerContext, HumanCreator, RandomAICreator, HeuristicAICreator
 
 class Menu:
     """Display a menu and respond to choices when run."""
