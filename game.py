@@ -1,5 +1,5 @@
 from board import Board, Caretaker
-from exceptions import InvalidDirectionError
+# from exceptions import InvalidDirectionError
 
 class Game:
     def __init__(self):
@@ -118,9 +118,7 @@ class Game:
         distance_from_nonMW_to_w2 = max(abs(nonMovedWorkerPos[0] - otherPlayer_w2_pos[0]), abs(nonMovedWorkerPos[1] - otherPlayer_w2_pos[1]))
 
         distance_score = min(distance_from_movedW_to_w1, distance_from_nonMW_to_w1) + min(distance_from_movedW_to_w2, distance_from_nonMW_to_w2)
-        # print(f"{movedWorkerPos}, {nonMovedWorkerPos}")
-        # print(f"{otherPlayer_w1_pos}, {otherPlayer_w2_pos}")
-        # print(f"{distance_from_movedW_to_w1}, {distance_from_nonMW_to_w1}, {distance_from_movedW_to_w2}, {distance_from_nonMW_to_w2}")
+
 
         return 8 - distance_score
 

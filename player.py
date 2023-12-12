@@ -2,7 +2,7 @@ from worker import Worker
 from move import Move
 import random
 # from game import Game
-from exceptions import InvalidDirectionError
+# from exceptions import InvalidDirectionError
 from abc import abstractmethod
 
 class Player:
@@ -214,10 +214,10 @@ class HeuristicAI(Player):
         return [max_move, max_move_score]
 
 class PlayerContext:
-    def __init__(self, player_type_with_params: Player):
+    def __init__(self, playerNum, game):
         '''For encapsulation of Player class from Client'''
-        self._player = player_type_with_params
-    
+        self._player = self.factory_method(playerNum, game)
+
     def movePlayer(self):
         print(self._player.move(), end="")
         self._player.game.save_board()
@@ -233,3 +233,22 @@ class PlayerContext:
     
     def player_type_human(self):
         return str(type(self._player).__name__) == "HumanPlayer"
+    
+    @abstractmethod
+    def factory_method() -> Player:
+        pass
+    
+class HumanCreator(PlayerContext):
+
+    def factory_method(self, playerNum, game):
+        return  HumanPlayer(playerNum, game=game)
+    
+class RandomAICreator(PlayerContext):
+
+    def factory_method(self, playerNum, game):
+        return  RandomAI(playerNum, game=game)
+    
+class HeuristicAICreator(PlayerContext):
+
+    def factory_method(self, playerNum, game):
+        return  RandomAI(playerNum, game=game)

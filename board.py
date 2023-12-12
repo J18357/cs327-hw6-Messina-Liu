@@ -121,6 +121,8 @@ class Caretaker:
         # if there is no board that is previously saved, don't do anything
         if not len(self._mementos) or len(self._mementos) == 1:
             return False
+        if self._index - 1 < 0:
+            return False
 
         # gets previous backup board and updates the game's board
         memento = self._mementos[self._index - 1]

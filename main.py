@@ -1,8 +1,8 @@
 import sys
 from game import Game
-from player import PlayerContext, HumanPlayer, RandomAI, HeuristicAI
+from player import PlayerContext, HumanCreator, RandomAICreator, HeuristicAICreator#HumanPlayer, RandomAI, HeuristicAI, 
 
-from exceptions import InvalidDirectionError
+# from exceptions import InvalidDirectionError
 
 class Menu:
     """Display a menu and respond to choices when run."""
@@ -29,11 +29,11 @@ class Menu:
     def _set_player_strat(self, player_type, playerNum):
         # Assumes that player_type is valid
         if  player_type == "human":
-            return PlayerContext(HumanPlayer(playerNum, game=self._game))
+            return (HumanCreator(playerNum, game=self._game))
         elif player_type == "random":
-            return PlayerContext(RandomAI(playerNum, game=self._game))
+            return (RandomAICreator(playerNum, game=self._game))
         elif player_type == "heuristic":
-            return PlayerContext(HeuristicAI(playerNum, game=self._game))
+            return (HeuristicAICreator(playerNum, game=self._game))
     
     def get_curr_player(self):
         """returns the current player number (1 or 2)"""
@@ -81,14 +81,16 @@ class Menu:
                 
                 # if player presses undo
                 if undo_redo_next == "undo":
-                    # if the other player is an AI, undo twice, if human, once
-                    if self.players[self.get_curr_player() % 2].player_type_human() == False:
-                        if self._game.undo_board():
-                            self._game.undo_board()
-                            self._turn -= 2
-                    elif self._game.undo_board():
-                        self._turn -= 1
-                    self.update_workers()
+                    # if we are at turn 2 and blue is human and white is AI, don't do anything
+                    if self._turn != 2 or self.players[self.get_curr_player() % 2].player_type_human() == True:
+                        # if the other player is an AI, undo twice, if human, once
+                        if self.players[self.get_curr_player() % 2].player_type_human() == False:
+                            if self._game.undo_board():
+                                self._game.undo_board()
+                                self._turn -= 2
+                        elif self._game.undo_board():
+                            self._turn -= 1
+                        self.update_workers()
 
                 # if player presses redo
                 elif undo_redo_next == "redo":
