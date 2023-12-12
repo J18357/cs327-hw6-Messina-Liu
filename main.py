@@ -180,5 +180,3 @@ if __name__ == "__main__":
                     if sys.argv[4] == "on":
                         enable_score = sys.argv[4]
     Menu(white_player_type, blue_player_type, enable_undo_redo, enable_score).run()
-
-    # TODO: catch AttributeError from restart input > exit

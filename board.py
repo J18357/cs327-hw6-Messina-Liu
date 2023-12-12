@@ -27,6 +27,16 @@ class Board:
             for j in range(5):
                 row.append(Tile())
             self.tiles.append(row)
+    
+    def get_tile_has_worker(self, tilePos_row, tilePos_col):
+        '''Getter method for whether a tile has a worker. Maintains encapsulation of Tile.'''
+        aTile = self.tiles[tilePos_row][tilePos_col]
+        return aTile.has_worker()
+
+    def get_tile_level(self, tilePos_row, tilePos_col):
+        '''Getter method for a tile's level. Maintains enscapsulation of Tile.'''
+        aTile = self.tiles[tilePos_row][tilePos_col]
+        return aTile.get_level()
 
     def update_tile(self, tilePos, worker=None):
         """updates a tile's worker"""

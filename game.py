@@ -15,6 +15,7 @@ class Game:
                                "nw":(-1,-1)}
     
     def check_move_dir(self, workerPos, dir_type, dir):
+        '''Checks whether the given direction is valid for the given worker position (workerPos) and direction type (dir_type, "move" or "build").'''
         input_dir = self.direction_dict[dir] # a tuple
         workerPosition = workerPos
         move_row = workerPosition[0] + input_dir[0]
@@ -23,23 +24,19 @@ class Game:
         if move_row < 0 or move_row > 4 or move_col < 0 or move_col > 4:
             return False
         else:
-            neighbor_tile = self._board.tiles[move_row][move_col]
-
+            
             # check space does not have a worker or dome (level 4)
-            # TODO: check encapsulation of Tile from Game
-            if neighbor_tile.has_worker() or neighbor_tile.get_level() == 4:
-                # print("neighbor tile has a worker or dome")
+            if self._board.get_tile_has_worker(move_row, move_col) or self._board.get_tile_level(move_row, move_col) == 4:
                 return False
-            if (dir_type == "move") and (neighbor_tile.get_level() > self.get_tile_level(workerPosition) + 1):
-                # print("can't move onto +2 level")
+            if (dir_type == "move") and (self._board.get_tile_level(move_row, move_col) > self._board.get_tile_level(workerPosition[0], workerPosition[1]) + 1):          
                 return False
         return True
     
-    def get_tile_level(self, workerPosition):
-        worker_tile = self._board.tiles[workerPosition[0]][workerPosition[1]]
-        return worker_tile.get_level()
+    def get_tile_level(self, workerPos):
+        return self._board.get_tile_level(workerPos[0], workerPos[1])
     
     def check_moves_adaptor(self, selectedWorker, dir_type, dir, proposal=None):
+        '''Semi-adaptor design pattern to simplify check_move_dir()'''
         workerPos = selectedWorker.get_position()
         if not proposal is None:
             workerPos = proposal
@@ -48,8 +45,6 @@ class Game:
     def enumerate_moves(self, selectedWorker, dir_type):
         '''Returns list of valid step OR build (dir_type) moves in tuple form (ex: (1,1)) for the selected worker'''
         valid_moves_lst = []
-
-        # print(f"here {valid_moves_lst}")
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if (i == 0 and j == 0):
@@ -92,7 +87,7 @@ class Game:
         return valid_moves_lst
     
     def get_height_score(self, worker1_pos, worker2_pos):
-       return self.get_tile_level(worker1_pos) + self.get_tile_level(worker2_pos)
+       return self._board.get_tile_level(worker1_pos[0], worker1_pos[1]) + self._board.get_tile_level(worker2_pos[0], worker2_pos[1])
 
     def get_center_score(self, worker1_pos, worker2_pos):
         return self.get_center_score_helper(worker1_pos) + self.get_center_score_helper(worker2_pos)
