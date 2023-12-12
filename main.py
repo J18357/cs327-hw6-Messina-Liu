@@ -148,9 +148,12 @@ class Menu:
     def restart(self):
         """if player types in 'yes' then a new game begins with same command line areguments"""
         restartInput = input("Play again?\n")
-        if restartInput == "yes":
-            Menu(self._white_player_type, self._blue_player_type, "on" if self._undo_redo else "off", "on" if self._score_enable else "off").run()
-        else:
+        try:
+            if restartInput == "yes":
+                Menu(self._white_player_type, self._blue_player_type, "on" if self._undo_redo else "off", "on" if self._score_enable else "off").run()
+            else:
+                self._quit()
+        except AttributeError:
             self._quit()
 
     def _quit(self):
